@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GuessTheNumber extends StatefulWidget {
   const GuessTheNumber({super.key});
@@ -14,6 +15,7 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
   String resultText = "";
   int attempts = 0;
   int highScore =0;
+  bool isNumberVisible= false;
 
 // Generate new random number
   @override
@@ -22,12 +24,30 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
     randomNumber = Random().nextInt(100) + 1;
     resultText ="Guess the right number";
     guessNumberController.clear();
+    _loadHighScore();
   }
+
+// Load high score from SharedPreferences
+  void _loadHighScore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      highScore = prefs.getInt('highScore') ?? 0;
+    });
+  }
+
+  // Save high score to SharedPreferences
+  void _saveHighScore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('highScore', highScore);
+  }
+
+ //generate new number
   void generateNewNumber() {
     setState(() {
       randomNumber = Random().nextInt(100) + 1;
       attempts=0;
       resultText = "New Number generated";
+      isNumberVisible =false;
       guessNumberController.clear(); // Clear input field
     });
   }
@@ -60,8 +80,9 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
         }
       } else {
         resultText = "Correct! You guessed it in\n $attempts attempts!";
-        if (highScore<attempts){
+        if (highScore==0|| highScore>attempts){
           highScore =attempts;
+          _saveHighScore();
         }
       }
     });
@@ -73,6 +94,28 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
   void showNumber() {
     setState(() {
       resultText = "Generated number: $randomNumber";
+    });
+  }
+
+//Reset high score.
+void resetHighScore()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('highScore');
+    setState(() {
+      highScore=0;
+    });
+}
+
+//toggle button
+  void toggleVisibility(){
+    setState(() {
+      isNumberVisible =! isNumberVisible;
+      if(isNumberVisible){
+        resultText="Generated Nummber: $randomNumber";
+      }
+      else {
+        resultText = "Guess the right number";
+      }
     });
   }
 
@@ -106,19 +149,32 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
 // TextField
                 TextField(
                   controller: guessNumberController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Guess The Number",
+                    labelStyle: const TextStyle( color: Colors.black,fontSize: 15),
+                    floatingLabelStyle:  const TextStyle( color: Colors.black,fontSize: 15),
+
                     hintText: "Enter a number between 1 and 100",
-                    hintStyle: TextStyle(color: Colors.black38, fontSize: 16),
-                    border: OutlineInputBorder(),
+                    hintStyle: const TextStyle(color: Colors.black38, fontSize: 16),
+
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.black,width: 01),
+                    ),
+
+                    focusedBorder:OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: Colors.black,width: 01),
+                    ),
+
                   ),
                   style: const TextStyle(fontSize: 20),
                   keyboardType: TextInputType.number,
+
                 ),
 
 
                 const SizedBox(height: 10),
-
 // guess button
                 SizedBox(
                   width: double.infinity,
@@ -191,45 +247,113 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
 
 // Generate New Number Button
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton(
-                      onPressed: generateNewNumber,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: generateNewNumber,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          ),
+                          padding:EdgeInsets.symmetric(horizontal: 10)
                         ),
-                      ),
-                      child: const Text(
-                        "Generate New Number",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                        textAlign: TextAlign.start,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: const Text(
+                            "Generate New Number",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
                       ),
                     ),
-
+/*
 //Show The Number
                     SizedBox(width: 2,),
-                    ElevatedButton(
-                      onPressed: showNumber,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: showNumber,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          ),
+                        ),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: const Text(
+                            "Show The Number",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white
+
+                            ),
+                            textAlign: TextAlign.start,
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        "Show The Number",
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white
-
+                    ),*/
+//toggle button
+                    SizedBox(width: 3,),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: toggleVisibility,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)
+                          ),
                         ),
-                        textAlign: TextAlign.start,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            isNumberVisible? "Hide The Number" : "Show The Number",
+                            style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white
+
+                            ),
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
+
+                SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+//"Reset High Score"
+                    ElevatedButton(
+                      onPressed: resetHighScore,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)
+                        ),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: const Text(
+                          "Reset High Score",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white
+
+                          ),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+
+
+
               ]
           ),
         )
