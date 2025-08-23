@@ -232,7 +232,7 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
                             borderRadius: BorderRadius.circular(8)),
                       ),
                       child: const Text(
-                        "Generate New Number",
+                        "Generate New\n Number",
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
@@ -246,7 +246,7 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
                         ),
                       ),
                       child: const Text(
-                        "Generate New Number",
+                        "Generate New\n Number",
                         style: TextStyle(fontSize: 18, color: Colors.white),
                       ),
                     ),
