@@ -15,13 +15,13 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
   int attempts = 0;
   int highScore =0;
 
-  // Generate new random number
+// Generate new random number
   @override
   void initState() {
     super.initState();
     randomNumber = Random().nextInt(100) + 1;
     resultText ="Guess the right number";
-    guessNumberController.clear;
+    guessNumberController.clear();
   }
   void generateNewNumber() {
     setState(() {
@@ -32,7 +32,7 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
     });
   }
 
-  // Compare user's guess with random number
+// Compare user's guess with random number
   void compareNumbers() {
     String input = guessNumberController.text;
     if (input.isEmpty) return;
@@ -69,7 +69,7 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
     guessNumberController.clear();
   }
 
-  // Show the current random number
+// Show the current random number
   void showNumber() {
     setState(() {
       resultText = "Generated number: $randomNumber";
@@ -77,168 +77,124 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
   }
 
   @override
+  void dispose() {
+    guessNumberController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            Image.asset(
-              'images/logo.png',
-              height: 250,
-              width: double.infinity,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Guess The Number",
-              style: TextStyle(fontSize: 30, color: Colors.black),
-            ),
-            const SizedBox(height: 20),
-
-            // TextField + Guess Button Row
-            Row(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: guessNumberController,
-                    decoration: const InputDecoration(
-                      labelText: "Guess The Number",
-                      hintText: "Enter a number between 1 and 100",
-                      hintStyle: TextStyle(color: Colors.black38, fontSize: 16),
-                      border: OutlineInputBorder(),
-                    ),
-                    style: const TextStyle(fontSize: 20),
-                    keyboardType: TextInputType.number,
+                const SizedBox(height: 40),
+                Image.asset(
+                  'images/logo.png',
+                  height: 250,
+                  width: double.infinity,
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Guess The Number",
+                  style: TextStyle(fontSize: 30, color: Colors.black),
+                ),
+                const SizedBox(height: 20),
+
+// TextField
+                TextField(
+                  controller: guessNumberController,
+                  decoration: const InputDecoration(
+                    labelText: "Guess The Number",
+                    hintText: "Enter a number between 1 and 100",
+                    hintStyle: TextStyle(color: Colors.black38, fontSize: 16),
+                    border: OutlineInputBorder(),
                   ),
+                  style: const TextStyle(fontSize: 20),
+                  keyboardType: TextInputType.number,
                 ),
 
- /*
- //Show Number Button
-                SizedBox(width: 10),
-                Container(
-                  height:60,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black, width: 1),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: showNumber,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                    ),
-                    child: const Text(
-                      "Show Number",
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black
-                      ),
-                    ),
-                  ),
-                ),
-                */
-              ],
-            ),
 
-            const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
 // guess button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: TextButton(
-                onPressed: compareNumbers,
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: TextButton(
+                    onPressed: compareNumbers,
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: const Text(
+                      "Guess",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
                   ),
                 ),
-                child: const Text(
-                  "Guess",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ),
-            ),
 
-            const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
 // Result Box
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Column(
-                  children: [
-                    Text(
-                      resultText,
-                      style: const TextStyle(fontSize: 20, color: Colors.black),
-                      textAlign: TextAlign.center,
-                    ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          resultText,
+                          style: const TextStyle(fontSize: 20, color: Colors.black),
+                          textAlign: TextAlign.center,
+                        ),
 
-                    SizedBox(height: 30,),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "High Score:",
-                            style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.black,
+                        SizedBox(height: 30,),
+                        RichText(
+                            text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "High Score:",
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.black,
 
+                                      )
+                                  ),
+
+                                  TextSpan(
+                                    text: " $highScore",
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      color: Colors.red,
+                                    ),
+
+                                  ),
+                                ]
                             )
-                          ),
+                        )
 
-                          TextSpan(
-                           text: " $highScore",
-                            style: TextStyle(
-                                fontSize: 30,
-                                color: Colors.red,
-                            ),
-
-                          ),
-                        ]
-                      )
-                    )
-
-                  ],
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
 // Generate New Number Button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: SingleChildScrollView(
-                child: Row(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
                       onPressed: generateNewNumber,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
-                      child: const Text(
-                        "Generate New\n Number",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                    ),
-                    SizedBox(width: 2,),
-                    ElevatedButton(
-                      onPressed: showNumber,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         shape: RoundedRectangleBorder(
@@ -246,20 +202,37 @@ class _GuessTheNumberState extends State<GuessTheNumber> {
                         ),
                       ),
                       child: const Text(
-                        "Generate New\n Number",
+                        "Generate New Number",
                         style: TextStyle(fontSize: 18, color: Colors.white),
+                        textAlign: TextAlign.start,
                       ),
                     ),
 
+//Show The Number
+                    SizedBox(width: 2,),
+                    ElevatedButton(
+                      onPressed: showNumber,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)
+                        ),
+                      ),
+                      child: const Text(
+                        "Show The Number",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white
+
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ),
-
-
-          ],
-        ),
-      ),
+              ]
+          ),
+        )
     );
   }
 }
